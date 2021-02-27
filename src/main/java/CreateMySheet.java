@@ -31,22 +31,25 @@ public class CreateMySheet {
 
     public void createCell(Map headersName){
         Collection headersValues = headersName.values();
-//        System.out.println("headers Value :" + headersValues);
         int rowNumber = 1;
-        XSSFRow row = sheet.createRow(rowNumber);
         int cellNumber = 0;
+        XSSFRow row = sheet.createRow(rowNumber);
         for (Object value:
                 headersValues) {
-            XSSFCell cell = row.createCell(cellNumber++);
-            rowNumber++;
+            XSSFCell cell;
             if(value instanceof ArrayList){
-                XSSFRow row1 = sheet.createRow(2);
                 for (int i = 0; i < ((ArrayList<?>) value).size(); i++) {
-                    XSSFCell cell1 = row1.createCell(i++);
-                    cell1.setCellValue(((ArrayList<?>) value).get(i).toString());
+                    row = sheet.createRow(rowNumber+i+1);
+//                    cell = row.createCell(3);
+//                    cell.setCellValue(((ArrayList<?>) value).get(i).toString());
+//                    System.out.println(((Map) ((ArrayList<?>) value).get(i)).entrySet());
+                    row.createCell(3).setCellValue(((Map) ((ArrayList<?>) value).get(i)).get("no").toString());
+                    row.createCell(4).setCellValue(((Map) ((ArrayList<?>) value).get(i)).get("effectiveDate").toString());
+                    row.createCell(5).setCellValue(((Map) ((ArrayList<?>) value).get(i)).get("mid").toString());
                 }
             }
             else if(value instanceof String){
+                cell = row.createCell(cellNumber++);
                 cell.setCellValue((String) value);
             }
         }
