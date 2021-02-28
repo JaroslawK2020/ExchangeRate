@@ -9,7 +9,7 @@ public class HttpConnection {
     private final static String NBP_API_TEMPLATE = "http://api.nbp.pl/api/exchangerates/rates/a/%s/%s/";
     private final static String NBP_API_TEMPLATE2 = "http://api.nbp.pl/api/exchangerates/rates/a/%s/%s/%s/";
 
-    static LocalDate dateFriday = LocalDate.of(2021,2,12);
+    static LocalDate dateFriday = LocalDate.of(2021,2,25);
     static LocalDate dateTuesday = LocalDate.of(2021,2,9);
 
 
