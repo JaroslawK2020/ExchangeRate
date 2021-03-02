@@ -19,34 +19,17 @@ public class ParsingApiResponse {
                 }
             });
             parsingJsonMap(jsonMap);
-
-           /* CreateMySheet sheet = new CreateMySheet();
-            System.out.println("jsonMap: " + jsonMap);
-            ArrayList ratesList = (ArrayList) jsonMap.get("rates");
-            System.out.println("ratesListClass: " + ratesList.getClass());
-            System.out.println("ratesListElementClass: " + ratesList.get(0).getClass());
-            HashMap hashMap =(HashMap) ratesList.get(0);//cast ratesList to hashMap*/
-
-        }catch (JsonProcessingException e){
+        } catch (JsonProcessingException e) {
             System.out.println(e.getStackTrace());
         }
 
 
     }
 
-    public static void parsingJsonMap(Map jsonMapFromNbp){
-        System.out.println("jsonMapFromNbp keySet: " + jsonMapFromNbp.keySet());
-//        System.out.println(jsonMapFromNbp);
-//        ArrayList ratesList = (ArrayList) jsonMapFromNbp.get("rates");
-//        System.out.println("ratesList size: " + ratesList.size());
-//        HashMap hashMap =(HashMap) ratesList.get(0);
-//        System.out.println("hashMap size:" + hashMap.size());
-//        System.out.println("hashMap keySet: " + hashMap.keySet());
+    public static void parsingJsonMap(Map jsonMapFromNbp) {
         CreateMySheet sheet = new CreateMySheet();
         sheet.createMySheet("test");
         sheet.createHeaders(jsonMapFromNbp);
-        sheet.createCell(jsonMapFromNbp);
-//        sheet.createCellsFromArray((ArrayList) jsonMapFromNbp.get("rates"));
-
+        sheet.createMyCells(jsonMapFromNbp);
     }
 }

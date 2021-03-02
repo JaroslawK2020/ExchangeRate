@@ -1,7 +1,6 @@
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.xssf.usermodel.*;
 
 import java.util.*;
 
@@ -9,6 +8,7 @@ public class CreateMySheet {
     private CreateExcelFile excelFile = new CreateExcelFile();
 
     private XSSFSheet sheet;
+
 
     public void createMySheet(String sheetName) {
         sheet = excelFile.returnWorkbook().createSheet(sheetName);
@@ -19,14 +19,19 @@ public class CreateMySheet {
         int rowNumber = 0;
         XSSFRow row = sheet.createRow(rowNumber);
         int cellNumber = 0;
+        XSSFFont font = sheet.getWorkbook().createFont();
+        font.setBold(true);
+        XSSFCellStyle cellStyle = sheet.getWorkbook().createCellStyle();
+        cellStyle.setFont(font);
         for (String key2 :
                 headersSet) {
             XSSFCell cell = row.createCell(cellNumber++);
             cell.setCellValue(key2);
+            cell.setCellStyle(cellStyle);
         }
     }
 
-    public void createCell(Map headersName) {
+    public void createMyCells(Map headersName) {
         Collection headersValues = headersName.values();
         int rowNumber = 1;
         int cellNumber = 0;
@@ -37,8 +42,8 @@ public class CreateMySheet {
             if (value instanceof ArrayList) {
                 int columnIndex = 3;
                 for (int i = 0; i < ((Map) ((ArrayList<?>) value).get(0)).keySet().size(); i++) {
-                    row.createCell(columnIndex++).setCellValue(((Map) ((ArrayList<?>) value).get(0)).keySet().toString());
-//                    row.createCell(columnIndex++).setCellValue(((Map) ((ArrayList<?>) value).get(0)).keySet().toString());
+                    List<String> list = new ArrayList<>(((Map) ((ArrayList<?>) value).get(0)).keySet());
+                    row.createCell(columnIndex++).setCellValue(list.get(i));
                 }
                 for (int i = 0; i < ((ArrayList<?>) value).size(); i++) {
                     row = sheet.createRow(rowNumber + i + 1);

@@ -20,8 +20,6 @@ public class HttpConnection {
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(String.format(NBP_API_TEMPLATE2,"usd",dateTuesday,dateFriday))).build();
         client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply(HttpResponse:: body)
-//                .thenAccept(System.out::println)
-//                .thenAccept(HttpConnection::parseNbpResponseToMap)
                 .thenAccept(ParsingApiResponse::parseNbpResponseToMap)
                 .join();
     }
