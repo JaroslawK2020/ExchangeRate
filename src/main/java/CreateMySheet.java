@@ -1,14 +1,13 @@
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.*;
 
 import java.util.*;
 
 public class CreateMySheet {
-    private CreateExcelFile excelFile = new CreateExcelFile();
+    private final CreateExcelFile excelFile = new CreateExcelFile();
 
     private XSSFSheet sheet;
-
 
     public void createMySheet(String sheetName) {
         sheet = excelFile.returnWorkbook().createSheet(sheetName);
@@ -19,15 +18,33 @@ public class CreateMySheet {
         int rowNumber = 0;
         XSSFRow row = sheet.createRow(rowNumber);
         int cellNumber = 0;
+//        set font style
         XSSFFont font = sheet.getWorkbook().createFont();
         font.setBold(true);
-        XSSFCellStyle cellStyle = sheet.getWorkbook().createCellStyle();
-        cellStyle.setFont(font);
+        font.setFontName("Arial");
+//        set cell style
+        XSSFCellStyle style1 = sheet.getWorkbook().createCellStyle();
+        style1.setFont(font);
+        style1.setAlignment(HorizontalAlignment.CENTER);
+        style1.setVerticalAlignment(VerticalAlignment.CENTER);
+        XSSFColor headersColor = new XSSFColor(java.awt.Color.cyan);
+        style1.setFillForegroundColor(headersColor);
+        style1.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+//        set row style
+        row.setHeight((short)700);
+//        set sheet style
+        final int NUM_OF_CELLS = 6;
+        for (int i = 0; i < NUM_OF_CELLS; i++) {
+            sheet.setColumnWidth(i,4500);
+        }
         for (String key2 :
                 headersSet) {
             XSSFCell cell = row.createCell(cellNumber++);
-            cell.setCellValue(key2);
-            cell.setCellStyle(cellStyle);
+            cell.setCellValue(key2.toUpperCase());
+            cell.setCellStyle(style1);
+            if(key2.equals("rates")){
+                sheet.addMergedRegion(new CellRangeAddress(0,0,3,5));
+            }
         }
     }
 
@@ -36,52 +53,51 @@ public class CreateMySheet {
         int rowNumber = 1;
         int cellNumber = 0;
         XSSFRow row = sheet.createRow(rowNumber);
+        XSSFCell cell;
+//        set font style
+        XSSFFont valuesFont = sheet.getWorkbook().createFont();
+        valuesFont.setBold(true);
+//        set cell style
+        XSSFCellStyle valuesCellStyle = sheet.getWorkbook().createCellStyle();
+        valuesCellStyle.setFont(valuesFont);
+        valuesCellStyle.setAlignment(HorizontalAlignment.CENTER);
+        valuesCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+//        set List cell style
+        XSSFCellStyle listStyle = sheet.getWorkbook().createCellStyle();
+        listStyle.setAlignment(HorizontalAlignment.CENTER);
+        listStyle.setVerticalAlignment(VerticalAlignment.CENTER);
         for (Object value :
                 headersValues) {
-            XSSFCell cell;
             if (value instanceof ArrayList) {
                 int columnIndex = 3;
                 for (int i = 0; i < ((Map) ((ArrayList<?>) value).get(0)).keySet().size(); i++) {
                     List<String> list = new ArrayList<>(((Map) ((ArrayList<?>) value).get(0)).keySet());
-                    row.createCell(columnIndex++).setCellValue(list.get(i));
+
+                    XSSFCell cellListHeaders = row.createCell(columnIndex++);
+                    cellListHeaders.setCellValue(list.get(i));
+                    cellListHeaders.setCellStyle(valuesCellStyle);
+
                 }
                 for (int i = 0; i < ((ArrayList<?>) value).size(); i++) {
                     row = sheet.createRow(rowNumber + i + 1);
-                    row.createCell(3).setCellValue(((Map) ((ArrayList<?>) value).get(i)).get("no").toString());
-                    row.createCell(4).setCellValue(((Map) ((ArrayList<?>) value).get(i)).get("effectiveDate").toString());
-                    row.createCell(5).setCellValue(((Map) ((ArrayList<?>) value).get(i)).get("mid").toString());
+
+                    XSSFCell cellNo = row.createCell(3);
+                    cellNo.setCellValue(((Map) ((ArrayList<?>) value).get(i)).get("no").toString());
+                    cellNo.setCellStyle(listStyle);
+
+                    XSSFCell cellEfffectiveDate = row.createCell(4);
+                    cellEfffectiveDate.setCellValue(((Map) ((ArrayList<?>) value).get(i)).get("effectiveDate").toString());
+                    cellEfffectiveDate.setCellStyle(listStyle);
+
+                    XSSFCell cellMid = row.createCell(5);
+                    cellMid.setCellValue(((Map) ((ArrayList<?>) value).get(i)).get("mid").toString());
+                    cellMid.setCellStyle(listStyle);
                 }
             } else if (value instanceof String) {
-                cell = row.createCell(cellNumber++);
-                cell.setCellValue((String) value);
+                XSSFCell valuesCell = row.createCell(cellNumber++);
+                valuesCell.setCellValue((String) value);
+                valuesCell.setCellStyle(valuesCellStyle);
             }
         }
     }
-
-    public void createMyRowFromArray(Map data) {
-        Set<String> keyset = data.keySet();
-        int rownum = 0;
-        for (String key : keyset) {
-            XSSFRow row = sheet.createRow(rownum++);
-            Object[] objArr = (Object[]) data.get(key);
-            int cellnum = 0;
-            for (Object obj : objArr) {
-                Cell cell = row.createCell(cellnum++);
-                if (obj instanceof String)
-                    cell.setCellValue((String) obj);
-                else if (obj instanceof Integer)
-                    cell.setCellValue((Integer) obj);
-            }
-        }
-    }
-
-
-
-
-
-
-
-    /*public void createExcel(){ //tworzy Excel nie wiem czy się tu przyda
-        excelFile.createExcelFile();
-    }*/
 }

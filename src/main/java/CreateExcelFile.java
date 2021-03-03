@@ -4,7 +4,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class CreateExcelFile {
-    private static XSSFWorkbook workbook = new XSSFWorkbook();
+    private final static XSSFWorkbook workbook = new XSSFWorkbook();
 
     public XSSFWorkbook returnWorkbook(){
         return workbook;
@@ -20,5 +20,4 @@ public class CreateExcelFile {
         }
         workbook.close();
     }
-
 }
