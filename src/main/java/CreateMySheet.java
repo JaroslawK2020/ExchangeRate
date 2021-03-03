@@ -31,19 +31,19 @@ public class CreateMySheet {
         style1.setFillForegroundColor(headersColor);
         style1.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 //        set row style
-        row.setHeight((short)700);
+        row.setHeight((short) 700);
 //        set sheet style
         final int NUM_OF_CELLS = 6;
         for (int i = 0; i < NUM_OF_CELLS; i++) {
-            sheet.setColumnWidth(i,4500);
+            sheet.setColumnWidth(i, 4500);
         }
         for (String key2 :
                 headersSet) {
             XSSFCell cell = row.createCell(cellNumber++);
             cell.setCellValue(key2.toUpperCase());
             cell.setCellStyle(style1);
-            if(key2.equals("rates")){
-                sheet.addMergedRegion(new CellRangeAddress(0,0,3,5));
+            if (key2.equals("rates")) {
+                sheet.addMergedRegion(new CellRangeAddress(0, 0, 3, 5));
             }
         }
     }

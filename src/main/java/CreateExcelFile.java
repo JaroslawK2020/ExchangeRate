@@ -6,7 +6,7 @@ import java.io.IOException;
 public class CreateExcelFile {
     private final static XSSFWorkbook workbook = new XSSFWorkbook();
 
-    public XSSFWorkbook returnWorkbook(){
+    public XSSFWorkbook returnWorkbook() {
         return workbook;
     }
 
@@ -15,7 +15,7 @@ public class CreateExcelFile {
         try {
             workbook.write(new FileOutputStream("Exchange rate.xlsx"));
             System.out.println("Excel created successfully");
-        }catch (IOException e){
+        } catch (IOException e) {
             System.out.println("File not created!");
         }
         workbook.close();
