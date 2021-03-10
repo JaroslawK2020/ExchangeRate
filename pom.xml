@@ -54,7 +54,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.4</version>
                 <configuration>
-                    <mainClass>main.java.window</mainClass>
+                    <mainClass>main.java.ExchangeRate.FrontEnd.Main</mainClass>
                 </configuration>
             </plugin>
         </plugins>
