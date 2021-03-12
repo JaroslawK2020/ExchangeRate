@@ -22,7 +22,8 @@ public class Main extends Application {
         Parent root = loader.load();
 
         stage.setTitle("test");
-        stage.setScene(new Scene(root, 800,500));
+        stage.setScene(new Scene(root, 1024,600));
+        stage.setResizable(false);
         stage.show();
     }
     public static void main(String[] args) throws IOException {
