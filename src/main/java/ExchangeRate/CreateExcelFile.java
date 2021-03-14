@@ -2,8 +2,11 @@ package ExchangeRate;
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.awt.*;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class CreateExcelFile {
     private final static XSSFWorkbook workbook = new XSSFWorkbook();
@@ -12,14 +15,17 @@ public class CreateExcelFile {
         return workbook;
     }
 
-    public void createExcelFile() throws IOException //dokument excel musi być utworzony po przypisaniu mu parametrów. Bo plik excel się nie otworzy
+    public void createAndOpenExcelFile() throws IOException //dokument excel musi być utworzony po przypisaniu mu parametrów. Bo plik excel się nie otworzy
     {
         try {
-            workbook.write(new FileOutputStream("Exchange rate.xlsx"));
+            File fileOut = new File("Exchange rate.xlsx");
+            FileOutputStream fileOutputStream = new FileOutputStream(fileOut);
+            workbook.write(fileOutputStream);
+//            workbook.close();
             System.out.println("Excel created successfully");
+            Desktop.getDesktop().open(new File(fileOut.getAbsolutePath()));
         } catch (IOException e) {
-            System.out.println("File not created!");
+            System.out.println(e.getMessage());
         }
-        workbook.close();
     }
 }

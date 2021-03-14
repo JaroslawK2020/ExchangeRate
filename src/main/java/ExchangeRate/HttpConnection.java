@@ -13,10 +13,11 @@ public class HttpConnection {
 
     public void connectWithNbp(String currencyCode, LocalDate startDate, LocalDate endDate) {
         HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(String.format(NBP_API_TEMPLATE_SEVERAL_DAYS, currencyCode, startDate, endDate))).build();
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(String.format(NBP_API_TEMPLATE_SEVERAL_DAYS, currencyCode.toLowerCase(), startDate, endDate))).build();
         client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply(HttpResponse::body)
                 .thenAccept(ParsingApiResponse::parseNbpResponseToMap)
                 .join();
+        System.out.println("connectWithNbp");
     }
 }

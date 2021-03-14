@@ -34,7 +34,7 @@
             <HBox alignment="CENTER_LEFT" prefHeight="59.0" prefWidth="282.0">
                <children>
 <!--                  <FontAwesomeIconView fill="#dfdfdf" glyphName="MOUSE_POINTER" size="18" wrappingWidth="20.257137298583984" />-->
-                  <ComboBox prefHeight="10.0" prefWidth="146.0" promptText="Select currency" />
+                  <ComboBox fx:id="currencyCode1" onAction="#setCurrency" prefHeight="10.0" prefWidth="146.0" promptText="Select currency" />
                </children>
                <padding>
                   <Insets left="70.0" />
@@ -42,7 +42,7 @@
             </HBox>
             <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="85.0" prefHeight="59.0" prefWidth="282.0">
                <children>
-                  <ComboBox prefHeight="10.0" prefWidth="146.0" promptText="Select currency" />
+                  <ComboBox fx:id="currencyCode2" onAction="#setCurrency" prefHeight="10.0" prefWidth="146.0" promptText="Select currency" />
                </children>
                <padding>
                   <Insets left="70.0" />
@@ -50,7 +50,7 @@
             </HBox>
             <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="85.0" prefHeight="59.0" prefWidth="282.0">
                <children>
-                  <ComboBox prefHeight="10.0" prefWidth="146.0" promptText="Select currency" />
+                  <ComboBox fx:id="currencyCode3" onAction="#setCurrency" prefHeight="10.0" prefWidth="146.0" promptText="Select currency" />
                </children>
                <padding>
                   <Insets left="70.0" />
@@ -58,7 +58,7 @@
             </HBox>
             <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="144.0" prefHeight="59.0" prefWidth="282.0">
                <children>
-                  <ComboBox prefHeight="10.0" prefWidth="146.0" promptText="Select currency" />
+                  <ComboBox fx:id="currencyCode4" onAction="#setCurrency" prefHeight="10.0" prefWidth="146.0" promptText="Select currency" />
                </children>
                <padding>
                   <Insets left="70.0" />
@@ -80,7 +80,7 @@
                   <Insets left="70.0" />
                </padding>
                <children>
-                  <DatePicker prefHeight="30.0" prefWidth="173.0" promptText="Select start date" />
+                  <DatePicker fx:id="startDate" onAction="#setDateRange" onMouseEntered="#disableStartDate" prefHeight="30.0" prefWidth="173.0" promptText="Select start date" />
                </children>
             </HBox>
             <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="397.0" prefHeight="59.0" prefWidth="282.0">
@@ -88,12 +88,12 @@
                   <Insets left="70.0" />
                </padding>
                <children>
-                  <DatePicker prefHeight="30.0" prefWidth="173.0" promptText="Select end date" />
+                  <DatePicker fx:id="endDate" onAction="#setDateRange" onMouseEntered="#disableEndDate" prefHeight="30.0" prefWidth="173.0" promptText="Select end date" />
                </children>
             </HBox>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <Button mnemonicParsing="false" prefHeight="45.0" prefWidth="228.0" style="-fx-background-color: #00A2D3;" text="Create chart" textFill="WHITE">
+                  <Button mnemonicParsing="false" onAction="#createChart" prefHeight="45.0" prefWidth="228.0" style="-fx-background-color: #00A2D3;" text="Create chart" textFill="WHITE">
                      <font>
                         <Font name="Ebrima Bold" size="18.0" />
                      </font>
@@ -120,7 +120,7 @@
                   </Label>
                </children>
             </Pane>
-            <LineChart>
+            <LineChart fx:id="lineChart">
               <xAxis>
                 <CategoryAxis side="BOTTOM" />
               </xAxis>
@@ -132,7 +132,7 @@
                <children>
                   <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="241.0">
                      <children>
-                        <Button mnemonicParsing="false" prefHeight="41.0" prefWidth="154.0" style="-fx-background-color: #1D6F42;" text="Excel" textFill="WHITE">
+                        <Button mnemonicParsing="false" onAction="#openExcelFile" prefHeight="41.0" prefWidth="154.0" style="-fx-background-color: #1D6F42;" text="Excel" textFill="WHITE">
                            <font>
                               <Font name="Segoe UI Bold" size="19.0" />
                            </font>
@@ -141,7 +141,7 @@
                   </VBox>
                   <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="241.0">
                      <children>
-                        <Button mnemonicParsing="false" prefHeight="41.0" prefWidth="154.0" style="-fx-background-color: #211F1F;" text="GitHub" textFill="WHITE">
+                        <Button mnemonicParsing="false" onAction="#openGitHub" prefHeight="41.0" prefWidth="154.0" style="-fx-background-color: #211F1F;" text="GitHub" textFill="WHITE">
                            <font>
                               <Font name="SansSerif Bold" size="19.0" />
                            </font>
@@ -150,7 +150,7 @@
                   </VBox>
                   <VBox alignment="CENTER" layoutX="252.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="241.0">
                      <children>
-                        <Button mnemonicParsing="false" prefHeight="41.0" prefWidth="154.0" style="-fx-background-color: #006c67;" text="NBP Web API" textFill="WHITE">
+                        <Button mnemonicParsing="false" onAction="#openNbpApi" prefHeight="41.0" prefWidth="154.0" style="-fx-background-color: #006c67;" text="NBP Web API" textFill="WHITE">
                            <font>
                               <Font name="Times New Roman" size="17.0" />
                            </font>
@@ -160,5 +160,17 @@
                </children>
             </HBox>
          </children></VBox>
+      <HBox alignment="CENTER_RIGHT" layoutX="300.0" layoutY="582.0" prefHeight="19.0" prefWidth="718.0">
+         <children>
+            <Label text="Test">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </Label>
+         </children>
+         <opaqueInsets>
+            <Insets right="10.0" />
+         </opaqueInsets>
+      </HBox>
    </children>
 </AnchorPane>

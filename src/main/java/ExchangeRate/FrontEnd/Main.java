@@ -7,8 +7,6 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -39,6 +37,6 @@ public class Main extends Application {
         connection1.connectWithNbp(choseDateAndCurrency.choseCurrency(), choseDateAndCurrency.choseStartDate(), choseDateAndCurrency.choseEndDate());
 
         CreateExcelFile createExcelFile = new CreateExcelFile();
-        createExcelFile.createExcelFile();//Excel musi być tworzony na końcu żeby mógł wczytać wszystkie parametry*/
+        createExcelFile.createAndOpenExcelFile();//Excel musi być tworzony na końcu żeby mógł wczytać wszystkie parametry*/
     }
 }
