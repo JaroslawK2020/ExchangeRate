@@ -2,29 +2,29 @@ package ExchangeRate.FrontEnd;
 
 import ExchangeRate.CreateExcelFile;
 import ExchangeRate.HttpConnection;
+import ExchangeRate.ParsingApiResponse;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DateCell;
-import javafx.scene.control.DatePicker;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
     //Combo boxes
-
-    CreateExcelFile createExcelFile = new CreateExcelFile();
 
     @FXML
     public ComboBox<String> currencyCode1 = new ComboBox<>();
@@ -35,8 +35,12 @@ public class Controller implements Initializable {
     @FXML
     public ComboBox<String> currencyCode4 = new ComboBox<>();
 
+//    error display
+    @FXML
+        public Label displayError = new Label();
+
     ObservableList<String> currencyList = FXCollections.observableArrayList
-            ("EUR","USD","CNY","RUB","BRL","CAD","GBP","CZK","JPY");
+            ("EUR", "USD", "CNY", "RUB", "BRL", "CAD", "GBP", "CZK", "JPY");
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -46,15 +50,20 @@ public class Controller implements Initializable {
         currencyCode4.setItems(currencyList);
     }
 
+    HttpConnection connection1 = new HttpConnection();
+    HttpConnection connection2 = new HttpConnection();
+    HttpConnection connection3 = new HttpConnection();
+    HttpConnection connection4 = new HttpConnection();
 
-//    currency
+
+//    create currency instance
 
     public String currency1;
     private String currency2;
     private String currency3;
     private String currency4;
 
-    public void setCurrency(ActionEvent actionEvent){
+    public void setCurrency(ActionEvent actionEvent) {
         currency1 = currencyCode1.getValue();
         currency2 = currencyCode2.getValue();
         currency3 = currencyCode3.getValue();
@@ -70,106 +79,205 @@ public class Controller implements Initializable {
     @FXML
     public DatePicker startDate = new DatePicker();
 
-    public void disableStartDate(){
-        startDate.setDayCellFactory(startDate->new DateCell(){
-            public void updateItem(LocalDate date, boolean empty){
-                super.updateItem(date,empty);
-                LocalDate threeMonthEarlier = LocalDate.now().minusDays(93);
-                LocalDate today = LocalDate.now();
-                setDisable(empty||date.compareTo(threeMonthEarlier) < 0||date.compareTo(today)>0);
-            }
-        });
+    public void disableStartDate() {
+        try {
+            startDate.setDayCellFactory(startDate -> new DateCell() {
+                public void updateItem(LocalDate date, boolean empty) {
+                    super.updateItem(date, empty);
+                    LocalDate threeMonthEarlier = LocalDate.now().minusDays(93);
+                    LocalDate today = LocalDate.now();
+                    setDisable(empty || date.compareTo(threeMonthEarlier) < 0 || date.compareTo(today) > 0);
+                }
+            });
+        } catch (Exception e) {
+            displayError.setText(e.getMessage());
+        }
     }
 
     @FXML
     private DatePicker endDate;
 
-    public void disableEndDate(){
-        endDate.setDayCellFactory(endDate->new DateCell(){
-            public void updateItem(LocalDate date, boolean empty){
-                super.updateItem(date,empty);
-                LocalDate today = LocalDate.now();
-                setDisable(empty||date.compareTo(today) > 0);
-            }
-        });
+    public void disableEndDate() {
+        try {
+            endDate.setDayCellFactory(endDate -> new DateCell() {
+                public void updateItem(LocalDate date, boolean empty) {
+                    super.updateItem(date, empty);
+                    LocalDate today = LocalDate.now();
+                    setDisable(empty || date.compareTo(today) > 0);
+                }
+            });
+        } catch (Exception e) {
+            displayError.setText(e.getMessage());
+        }
     }
 
-    private LocalDate setStartDate;
-    private LocalDate setEndDate;
+    private LocalDate getStartDate;
+    private LocalDate getEndDate;
 
-    public void setDateRange(ActionEvent actionEvent){
-        setStartDate = startDate.getValue();
-        setEndDate = endDate.getValue();
-
+    public void setDateRange(ActionEvent actionEvent) {
+        getStartDate = startDate.getValue();
+        getEndDate = endDate.getValue();
     }
-//    chart
+//    create line chart
 
     @FXML
-    public LineChart<String,Number> lineChart;
+    public LineChart<String, Number> lineChart;
 
-    public void createChart(ActionEvent actionEvent){//do poprawy
-        /*System.out.println(currency1);
-        System.out.println(setStartDate);
-        System.out.println(setEndDate);
-        HttpConnection connection = new HttpConnection();
-        CreateExcelFile createExcelFile = new CreateExcelFile();
-        connection.connectWithNbp(currency1,setStartDate,setEndDate);
-//        createExcelFile.createAndOpenExcelFile();*/
+    private static Map json;
 
-
-
-
-        /*XYChart.Series<String,Number> dateSeries = new XYChart.Series<String,Number>();
-        dateSeries.getData().add(new XYChart.Data<String,Number>(setStartDate.toString(),3.39));
-        dateSeries.getData().add(new XYChart.Data<String,Number>("2021-03-09",2.90));
-        dateSeries.getData().add(new XYChart.Data<String,Number>("2021-03-10",3.80));
-        dateSeries.getData().add(new XYChart.Data<String,Number>(setEndDate.toString(),3.12));
-        lineChart.getData().add(dateSeries);*/
-
+    public Map getJson() {
+        return json;
     }
 
-//    open webpage
-    public void openGitHub(ActionEvent actionEvent){
-        try{
+    public void setJson(Map json) {
+        this.json = json;
+    }
+
+    public void createChart(ActionEvent actionEvent) {
+        try {
+            lineChart.getData().clear();//clearing line chart
+
+            List<Object> currencyList = new ArrayList<>();
+            connection1.connectWithNbp(currency1, getStartDate, getEndDate);
+            currencyList.add(getJson());
+            connection2.connectWithNbp(currency2, getStartDate, getEndDate);
+            currencyList.add(getJson());
+            connection3.connectWithNbp(currency3, getStartDate, getEndDate);
+            currencyList.add(getJson());
+            connection4.connectWithNbp(currency4, getStartDate, getEndDate);
+            currencyList.add(getJson());
+
+            XYChart.Series<String, Number> currencySeries1 = new XYChart.Series<>();
+            XYChart.Series<String, Number> currencySeries2 = new XYChart.Series<>();
+            XYChart.Series<String, Number> currencySeries3 = new XYChart.Series<>();
+            XYChart.Series<String, Number> currencySeries4 = new XYChart.Series<>();
+
+//        create line chart currency1
+            for (int i = 0; i < ((ArrayList) ((Map) currencyList.get(0)).get("rates")).size(); i++) {
+                currencySeries1.getData().add(new XYChart.Data<>(((String) ((Map) ((ArrayList) ((Map<?, ?>) currencyList.get(0)).get("rates")).get(i)).get("effectiveDate")),
+                        ((Double) ((Map) ((ArrayList) ((Map<?, ?>) currencyList.get(0)).get("rates")).get(i)).get("mid"))));
+
+            }
+            currencySeries1.setName(((Map<?, ?>) currencyList.get(0)).get("currency").toString());
+
+
+//        create line chart currency2
+            for (int i = 0; i < ((ArrayList) ((Map) currencyList.get(1)).get("rates")).size(); i++) {
+                currencySeries2.getData().add(new XYChart.Data<>(((String) ((Map) ((ArrayList) ((Map<?, ?>) currencyList.get(1)).get("rates")).get(i)).get("effectiveDate")),
+                        ((Double) ((Map) ((ArrayList) ((Map<?, ?>) currencyList.get(1)).get("rates")).get(i)).get("mid"))));
+
+            }
+            currencySeries2.setName(((Map<?, ?>) currencyList.get(1)).get("currency").toString());
+
+//        create line chart currency3
+            for (int i = 0; i < ((ArrayList) ((Map) currencyList.get(2)).get("rates")).size(); i++) {
+                currencySeries3.getData().add(new XYChart.Data<>(((String) ((Map) ((ArrayList) ((Map<?, ?>) currencyList.get(3)).get("rates")).get(i)).get("effectiveDate")),
+                        ((Double) ((Map) ((ArrayList) ((Map<?, ?>) currencyList.get(2)).get("rates")).get(i)).get("mid"))));
+
+            }
+            currencySeries3.setName(((Map<?, ?>) currencyList.get(2)).get("currency").toString());
+
+//        create line chart currency4
+            for (int i = 0; i < ((ArrayList) ((Map) currencyList.get(3)).get("rates")).size(); i++) {
+                currencySeries4.getData().add(new XYChart.Data<>(((String) ((Map) ((ArrayList) ((Map<?, ?>) currencyList.get(3)).get("rates")).get(i)).get("effectiveDate")),
+                        ((Double) ((Map) ((ArrayList) ((Map<?, ?>) currencyList.get(3)).get("rates")).get(i)).get("mid"))));
+
+            }
+            currencySeries4.setName(((Map<?, ?>) currencyList.get(3)).get("currency").toString());
+
+            lineChart.getData().addAll(currencySeries1, currencySeries2, currencySeries3, currencySeries4);
+
+            for (final XYChart.Data<String, Number> currency1Data:
+                    currencySeries1.getData()) {
+                currency1Data.getNode().addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent mouseEvent) {
+                        Tooltip.install(currency1Data.getNode(),new Tooltip(currency1Data.getXValue() + "\n" + String.valueOf(currency1Data.getYValue())));
+                    }
+                });
+
+            }
+
+            for (final XYChart.Data<String, Number> currency2Data:
+                    currencySeries2.getData()) {
+                currency2Data.getNode().addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent mouseEvent) {
+                        Tooltip.install(currency2Data.getNode(),new Tooltip(currency2Data.getXValue() + "\n" + String.valueOf(currency2Data.getYValue())));
+                    }
+                });
+
+            }
+
+            for (final XYChart.Data<String, Number> currency3Data:
+                    currencySeries3.getData()) {
+                currency3Data.getNode().addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent mouseEvent) {
+                        Tooltip.install(currency3Data.getNode(),new Tooltip(currency3Data.getXValue() + "\n" + String.valueOf(currency3Data.getYValue())));
+                    }
+                });
+
+            }
+
+            for (final XYChart.Data<String, Number> currency4Data:
+                    currencySeries4.getData()) {
+                currency4Data.getNode().addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent mouseEvent) {
+                        Tooltip.install(currency4Data.getNode(),new Tooltip(currency4Data.getXValue() + "\n" + String.valueOf(currency4Data.getYValue())));
+                    }
+                });
+
+            }
+
+
+        } catch (Exception e) {
+            displayError.setText(e.getMessage());
+        }
+    }
+
+
+    //    open webpage
+    public void openGitHub(ActionEvent actionEvent) {
+        try {
             URI uri = new URI("https://github.com/JaroslawK2020/ExchangeRate.git");
             java.awt.Desktop.getDesktop().browse(uri);
             System.out.println("Web page opened in browser");
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void openNbpApi(ActionEvent actionEvent){
-        try{
+    public void openNbpApi(ActionEvent actionEvent) {
+        try {
             URI uri = new URI("http://api.nbp.pl/");
             java.awt.Desktop.getDesktop().browse(uri);
             System.out.println("Web page opened in browser");
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-//    open excel file
+    //    open excel file
     public void openExcelFile(ActionEvent actionEvent) {
-
-
-        HttpConnection connection1 = new HttpConnection();
-        HttpConnection connection2 = new HttpConnection();
-        HttpConnection connection3 = new HttpConnection();
-        HttpConnection connection4 = new HttpConnection();
-        try{
+        try {
             CreateExcelFile createExcelFile = new CreateExcelFile();
-            connection1.connectWithNbp(currency1,setStartDate,setEndDate);
-            connection2.connectWithNbp(currency2,setStartDate,setEndDate);
-            connection3.connectWithNbp(currency3,setStartDate,setEndDate);
-            connection4.connectWithNbp(currency4,setStartDate,setEndDate);
+            ParsingApiResponse apiResponse1 = new ParsingApiResponse();
+            ParsingApiResponse apiResponse2 = new ParsingApiResponse();
+            ParsingApiResponse apiResponse3 = new ParsingApiResponse();
+            ParsingApiResponse apiResponse4 = new ParsingApiResponse();
+            connection1.connectWithNbp(currency1, getStartDate, getEndDate);
+            apiResponse1.parsingJsonMap();
+            connection2.connectWithNbp(currency2, getStartDate, getEndDate);
+            apiResponse2.parsingJsonMap();
+            connection3.connectWithNbp(currency3, getStartDate, getEndDate);
+            apiResponse3.parsingJsonMap();
+            connection4.connectWithNbp(currency4, getStartDate, getEndDate);
+            apiResponse4.parsingJsonMap();
             createExcelFile.createAndOpenExcelFile();
-        }catch (IOException e){
-            System.out.println(e.getMessage());
+        } catch (IOException e) {
+            displayError.setText(e.getMessage());
         }
     }
-
-
-
-
 }

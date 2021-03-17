@@ -1,8 +1,5 @@
 package ExchangeRate.FrontEnd;
 
-import ExchangeRate.ChoseDateAndCurrency;
-import ExchangeRate.CreateExcelFile;
-import ExchangeRate.HttpConnection;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -19,7 +16,7 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader(new File("src/main/java/ExchangeRate/FrontEnd/userWindow.fxml").toURI().toURL());
         Parent root = loader.load();
 
-        stage.setTitle("test");
+        stage.setTitle("Exchange rate");
         stage.setScene(new Scene(root, 1024,600));
         stage.setResizable(false);
         stage.show();
