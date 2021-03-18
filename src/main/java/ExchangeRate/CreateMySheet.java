@@ -4,7 +4,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.*;
 
-import java.time.LocalDate;
+import java.text.CollationElementIterator;
 import java.util.*;
 
 public class CreateMySheet {
@@ -12,11 +12,11 @@ public class CreateMySheet {
 
     private XSSFSheet sheet;
 
-    public void createMySheet(String sheetName) {
+    protected void createMySheet(String sheetName) {
         sheet = excelFile.returnWorkbook().createSheet(sheetName);
     }
 
-    public void createHeaders(Map headersName) {
+    protected void createHeaders(Map headersName) {
         Set<String> headersSet = headersName.keySet();
         int rowNumber = 0;
         XSSFRow row = sheet.createRow(rowNumber);
@@ -51,12 +51,11 @@ public class CreateMySheet {
         }
     }
 
-    public void createMyCells(Map headersName) {
+    protected void createMyCells(Map headersName) {
         Collection headersValues = headersName.values();
         int rowNumber = 1;
         int cellNumber = 0;
         XSSFRow row = sheet.createRow(rowNumber);
-        XSSFCell cell;
 //        set font style
         XSSFFont valuesFont = sheet.getWorkbook().createFont();
         valuesFont.setBold(true);
@@ -79,7 +78,6 @@ public class CreateMySheet {
                     XSSFCell cellListHeaders = row.createCell(columnIndex++);
                     cellListHeaders.setCellValue(list.get(i));
                     cellListHeaders.setCellStyle(valuesCellStyle);
-
                 }
                 for (int i = 0; i < ((ArrayList<?>) value).size(); i++) {
                     row = sheet.createRow(rowNumber + i + 1);
@@ -88,9 +86,9 @@ public class CreateMySheet {
                     cellNo.setCellValue(((Map) ((ArrayList<?>) value).get(i)).get("no").toString());
                     cellNo.setCellStyle(listStyle);
 
-                    XSSFCell cellEfffectiveDate = row.createCell(4);
-                    cellEfffectiveDate.setCellValue(((Map) ((ArrayList<?>) value).get(i)).get("effectiveDate").toString());
-                    cellEfffectiveDate.setCellStyle(listStyle);
+                    XSSFCell cellEffectiveDate = row.createCell(4);
+                    cellEffectiveDate.setCellValue(((Map) ((ArrayList<?>) value).get(i)).get("effectiveDate").toString());
+                    cellEffectiveDate.setCellStyle(listStyle);
 
                     XSSFCell cellMid = row.createCell(5);
                     cellMid.setCellValue(((Map) ((ArrayList<?>) value).get(i)).get("mid").toString());

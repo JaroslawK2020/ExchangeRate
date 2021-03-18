@@ -6,7 +6,6 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 
 public class CreateExcelFile {
     private final static XSSFWorkbook workbook = new XSSFWorkbook();
@@ -21,7 +20,6 @@ public class CreateExcelFile {
             File fileOut = new File("Exchange rate.xlsx");
             FileOutputStream fileOutputStream = new FileOutputStream(fileOut);
             workbook.write(fileOutputStream);
-//            workbook.close();
             System.out.println("Excel created successfully");
             Desktop.getDesktop().open(new File(fileOut.getAbsolutePath()));
         } catch (IOException e) {
