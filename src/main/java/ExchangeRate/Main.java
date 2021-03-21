@@ -1,4 +1,4 @@
-package ExchangeRate.FrontEnd;
+package ExchangeRate;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
