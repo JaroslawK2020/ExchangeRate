@@ -48,6 +48,7 @@ public class Controller implements Initializable {
         currencyCode4.setItems(currencyList);
     }
 
+
     private final HttpConnection connection1 = new HttpConnection();
     private final HttpConnection connection2 = new HttpConnection();
     private final HttpConnection connection3 = new HttpConnection();
